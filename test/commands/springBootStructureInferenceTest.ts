@@ -1,7 +1,7 @@
-import "mocha";
-import * as assert from "power-assert";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import "mocha";
+import * as assert from "power-assert";
 import { inferFromKotlinSource } from "../../src/commands/kotlinUtils";
 
 describe("Spring Boot structure inference from Kotlin source", () => {

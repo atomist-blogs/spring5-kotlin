@@ -1,12 +1,12 @@
 {
-  "name": "@atomist/automation-seed",
+  "name": "spring5-kotlin",
   "version": "0.1.0",
-  "description": "Atomist automation seed project",
+  "description": "Atomist generator for Spring 5 within Kotlin",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atomist/automation-seed-ts.git"
+    "url": "https://github.com/atomist-blogs/spring5-kotlin-ts.git"
   },
   "keywords": [
     "atomist",
@@ -19,8 +19,7 @@
   },
   "dependencies": {
     "@atomist/antlr": "^0.1.2",
-    "@atomist/automation-client": "^0.1.48",
-    "@typed/curry": "^1.0.1",
+    "@atomist/automation-client": "^0.1.49",
     "app-root-path": "^2.0.1"
   },
   "devDependencies": {
@@ -56,7 +55,7 @@
     "git:info": "$(npm bin)/git-info",
     "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript -m --out ./src/typings/ \"./graphql/**/*.graphql\"",
     "lint": "tslint --format verbose --project . --exclude '{build,node_modules}/**' '**/*.ts'",
-    "lint-fix": "npm run lint -- --fix",
+    "lint:fix": "npm run lint -- --fix",
     "start": "npm run compile && npm run git:info && $(npm bin)/atomist-client --open=true",
     "test": "mocha --compilers ts:espower-typescript/guess 'test/**/*.ts'",
     "testone": "mocha --compilers ts:espower-typescript/guess \"test/**/${TEST:-*.ts}\"",

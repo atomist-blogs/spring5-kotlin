@@ -1,8 +1,8 @@
+import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import "mocha";
 import * as assert from "power-assert";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { AllKotlinFiles, inferFromKotlinSource } from "../../src/commands/kotlinUtils";
-import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
 
 describe("package move", () => {
 
@@ -10,7 +10,7 @@ describe("package move", () => {
         const path = "src/main/kotlin/com/smashing/pumpkins/Gish.kt";
         const p = InMemoryProject.of(
             {
-                path: path,
+                path,
                 content: kotlinSource,
             },
         );

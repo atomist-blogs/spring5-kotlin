@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import "mocha";
-import { runCommand } from "@atomist/automation-client/internal/util/commandLine";
-import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
+import { runCommand } from "@atomist/automation-client/internal/util/commandLine";
+import "mocha";
+import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
 
 describe("Kotlin Spring5 generator end to end", () => {
 
@@ -26,7 +26,7 @@ describe("Kotlin Spring5 generator end to end", () => {
         generate().then(_ => {
             done();
         }).catch(done);
-    })//.timeout(200000);
+    }); // .timeout(200000);
 
     function generate(): Promise<any> {
         const kgen = new TestGenerator();
@@ -37,8 +37,7 @@ describe("Kotlin Spring5 generator end to end", () => {
     }
 
     function verify(hr: HandlerResult): Promise<any> {
-        console.log("verification");
-        return runCommand("mvn compile", {cwd: (hr as any).baseDir})
+        return runCommand("mvn compile", {cwd: (hr as any).baseDir});
     }
 
 });
@@ -47,8 +46,6 @@ export class TestGenerator extends KotlinSpring5 {
 
     constructor() {
         super();
-        this.sourceOwner = "johnsonr";
-        this.sourceRepo = "flux-flix-service";
         this.githubToken = process.env.GITHUB_TOKEN;
         this.local = true;
     }
