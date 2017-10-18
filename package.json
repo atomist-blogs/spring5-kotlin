@@ -19,15 +19,14 @@
   },
   "dependencies": {
     "@atomist/antlr": "^0.1.2",
-    "@atomist/automation-client": "^0.1.46",
-    "@atomist/tree-path": "^0.1.2",
+    "@atomist/automation-client": "^0.1.48",
     "@typed/curry": "^1.0.1",
     "app-root-path": "^2.0.1"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
     "@types/mocha": "^2.2.41",
-    "@types/node": "^8.0.40",
+    "@types/node": "^8.0.45",
     "@types/power-assert": "^1.4.29",
     "espower-typescript": "^8.0.2",
     "graphql-code-generator": "^0.8.13",

@@ -1,10 +1,10 @@
 import "mocha";
 import * as assert from "power-assert";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { KotlinSpringBootProjectStructure } from "../../src/commands/KotlinSpringBootStructure";
-import { movePackage } from "../../src/commands/kotlinProjectUtils";
+import { AllKotlinFiles, inferFromKotlinSource } from "../../src/commands/kotlinUtils";
+import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
 
-describe("kotlinProjectUtils", () => {
+describe("package move", () => {
 
     it("moves files", done => {
         const path = "src/main/kotlin/com/smashing/pumpkins/Gish.kt";
@@ -14,10 +14,10 @@ describe("kotlinProjectUtils", () => {
                 content: kotlinSource,
             },
         );
-        KotlinSpringBootProjectStructure.infer(p).then(structure => {
+        inferFromKotlinSource(p).then(structure => {
             assert(structure.applicationPackage === "com.smashing.pumpkins");
-            assert(structure.appFilePath === path);
-            movePackage(p, structure.applicationPackage, "com.the.smiths")
+            assert(structure.appClassFile.path === path);
+            movePackage(p, structure.applicationPackage, "com.the.smiths", AllKotlinFiles)
                 .then(_ => {
                     assert(!p.findFileSync(path));
                     const newFile = p.findFileSync("src/main/kotlin/com/the/smiths/Gish.kt");

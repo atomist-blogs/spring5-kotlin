@@ -1,14 +1,14 @@
 import "mocha";
 import * as assert from "power-assert";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { KotlinSpringBootProjectStructure } from "../../src/commands/KotlinSpringBootStructure";
 import { Project } from "@atomist/automation-client/project/Project";
+import { inferFromKotlinSource } from "../../src/commands/kotlinUtils";
 
-describe("KotlinSpringBootProjectStructure", () => {
+describe("Spring Boot structure inference from Kotlin source", () => {
 
     it("infer not a spring project", done => {
         const p = InMemoryProject.of();
-        KotlinSpringBootProjectStructure.infer(p).then(structure => {
+        inferFromKotlinSource(p).then(structure => {
             assert(!structure);
             done();
         }).catch(done);
@@ -21,16 +21,16 @@ describe("KotlinSpringBootProjectStructure", () => {
                 content: kotlinSource,
             },
         );
-        KotlinSpringBootProjectStructure.infer(p).then(structure => {
+        inferFromKotlinSource(p).then(structure => {
             assert(!structure);
             done();
         }).catch(done);
     });
 
     it("infer application package and class when present", done => {
-        KotlinSpringBootProjectStructure.infer(GishProject).then(structure => {
+        inferFromKotlinSource(GishProject).then(structure => {
             assert(structure.applicationPackage === "com.smashing.pumpkins");
-            assert(structure.appFilePath === GishPath);
+            assert(structure.appClassFile.path === GishPath);
             done();
         }).catch(done);
     });

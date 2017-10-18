@@ -18,11 +18,10 @@ import "mocha";
 import * as assert from "power-assert";
 
 import { runCommand } from "@atomist/automation-client/internal/util/commandLine";
-import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
 import { TestGenerator } from "./KotlinSpring5EndToEndTest";
 import { Project } from "@atomist/automation-client/project/Project";
-import { GishPath, GishProject } from "./KotlinSpringBootProjectStructureTest";
+import { GishPath, GishProject } from "./springBootStructureInferenceTest";
 
 describe("Kotlin Spring5 generator", () => {
 
