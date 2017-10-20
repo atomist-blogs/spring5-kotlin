@@ -2,7 +2,7 @@ import { curry } from "@typed/curry";
 
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
-import { JavaSeed } from "@atomist/automation-client/operations/generate/java/JavaSeed";
+import { JavaSeed, VersionedArtifact } from "@atomist/automation-client/operations/generate/java/JavaSeed";
 import {
     SpringBootProjectStructure,
 } from "@atomist/automation-client/operations/generate/java/SpringBootProjectStructure";
@@ -11,6 +11,9 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { camelize } from "tslint/lib/utils";
 import { AllKotlinFiles, inferFromKotlinSource } from "./kotlinUtils";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
+import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 
 const DefaultSourceOwner = "johnsonr";
 const DefaultSourceRepo = "flux-flix-service";
@@ -28,15 +31,22 @@ export class KotlinSpring5 extends JavaSeed {
         this.sourceRepo = DefaultSourceRepo;
     }
 
-    public manipulate(project: Project): Promise<Project> {
-        let appName = camelize(this.artifactId);
-        appName = appName.charAt(0).toUpperCase() + appName.substr(1);
-        const smartArtifactId = (this.artifactId === "${projectName}") ? project.name : this.artifactId;
-        return updatePom(project, smartArtifactId, this.groupId, this.version, this.description)
-            .then(curry(doMovePackage)(this.rootPackage))
-            .then(structure => renameApp(project, structure, appName));
+    public projectEditor(ctx: HandlerContext): ProjectEditor<any> {
+        return chainEditors(
+            super.projectEditor(ctx),
+            curry(manipulate)(this.rootPackage, this),
+        );
     }
 
+}
+
+function manipulate(rootPackage: string, va: VersionedArtifact, project: Project): Promise<Project> {
+    let appName = camelize(va.artifactId);
+    appName = appName.charAt(0).toUpperCase() + appName.substr(1);
+    const smartArtifactId = (va.artifactId === "${projectName}") ? project.name : va.artifactId;
+    return updatePom(project, smartArtifactId, va.groupId, va.version, va.description)
+        .then(curry(doMovePackage)(rootPackage))
+        .then(structure => renameApp(project, structure, appName));
 }
 
 function doMovePackage(rootPackage: string, project: Project): Promise<SpringBootProjectStructure> {

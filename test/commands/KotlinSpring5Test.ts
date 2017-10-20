@@ -18,10 +18,10 @@ import "mocha";
 import * as assert from "power-assert";
 
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
-import { runCommand } from "@atomist/automation-client/internal/util/commandLine";
 import { Project } from "@atomist/automation-client/project/Project";
 import { TestGenerator } from "./KotlinSpring5EndToEndTest";
 import { GishPath, GishProject } from "./springBootStructureInferenceTest";
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 
 describe("Kotlin Spring5 generator", () => {
 
@@ -36,19 +36,25 @@ describe("Kotlin Spring5 generator", () => {
         kgen.artifactId = "my-custom";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.manipulate(project)
-            .then(p => {
-                assert(!p.findFileSync(GishPath));
-                const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustom.kt");
-                assert(f);
-                const content = f.getContentSync();
-                assert(content.includes("class MyCustom"));
-                return p;
+        return kgen.projectEditor(null)(project, null, null)
+            .then(hr => {
+                verify(project);
+                return project;
             });
     }
 
-    function verify(hr: HandlerResult): Promise<any> {
-        return runCommand("mvn compile", {cwd: (hr as any).baseDir});
-    }
-
 });
+
+export function verify(p: Project) {
+    assert(!p.findFileSync(GishPath));
+    const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustom.kt");
+    assert(f);
+    const content = f.getContentSync();
+    assert(content.includes("class MyCustom"));
+    console.log("Verification ok");
+}
+
+
+function compile(hr: HandlerResult): Promise<any> {
+    return runCommand("mvn compile", {cwd: (hr as any).baseDir});
+}

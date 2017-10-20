@@ -15,29 +15,29 @@
  */
 
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
-import { runCommand } from "@atomist/automation-client/internal/util/commandLine";
 import "mocha";
 import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { verify } from "./KotlinSpring5Test";
+import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 
 describe("Kotlin Spring5 generator end to end", () => {
 
-    // TODO fix this
-    it.skip("edits and persists", done => {
+    it("edits and persists", done => {
         generate().then(_ => {
             done();
         }).catch(done);
-    }); // .timeout(200000);
+    }).timeout(200000);
 
     function generate(): Promise<any> {
         const kgen = new TestGenerator();
         kgen.artifactId = "k5";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.handle(null).then(verify);
-    }
-
-    function verify(hr: HandlerResult): Promise<any> {
-        return runCommand("mvn compile", {cwd: (hr as any).baseDir});
+        return kgen.handle(null).then(hr => {
+                return verify(new NodeFsLocalProject("", (hr as any).baseDir));
+            }
+        );
     }
 
 });
