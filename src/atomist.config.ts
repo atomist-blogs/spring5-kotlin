@@ -29,7 +29,7 @@ export const configuration: Configuration = {
     version: pj.version,
     teamIds: "T7GMF5USG", // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
-        () => new KotlinSpring5(),
+        KotlinSpring5,
     ],
     events: [
     ],

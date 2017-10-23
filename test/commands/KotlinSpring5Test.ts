@@ -36,7 +36,7 @@ describe("Kotlin Spring5 generator", () => {
         kgen.artifactId = "my-custom";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.projectEditor(null)(project, null, null)
+        return kgen.projectEditor(null, kgen)(project, null, null)
             .then(hr => {
                 verify(project);
                 return project;

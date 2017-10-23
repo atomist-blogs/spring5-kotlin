@@ -23,18 +23,18 @@ import { NodeFsLocalProject } from "@atomist/automation-client/project/local/Nod
 
 describe("Kotlin Spring5 generator end to end", () => {
 
-    it("edits and persists", done => {
+    it.skip("edits and persists", done => {
         generate().then(_ => {
             done();
         }).catch(done);
-    }).timeout(200000);
+    })//.timeout(200000);
 
     function generate(): Promise<any> {
         const kgen = new TestGenerator();
         kgen.artifactId = "k5";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.handle(null).then(hr => {
+        return kgen.handle(null, kgen).then(hr => {
                 return verify(new NodeFsLocalProject("", (hr as any).baseDir));
             }
         );

@@ -31,10 +31,10 @@ export class KotlinSpring5 extends JavaSeed {
         this.sourceRepo = DefaultSourceRepo;
     }
 
-    public projectEditor(ctx: HandlerContext): ProjectEditor<any> {
+    public projectEditor(ctx: HandlerContext, params: this): ProjectEditor<any> {
         return chainEditors(
-            super.projectEditor(ctx),
-            curry(manipulate)(this.rootPackage, this),
+            super.projectEditor(ctx, params),
+            (project: Project) => manipulate(params.rootPackage, params, project),
         );
     }
 
