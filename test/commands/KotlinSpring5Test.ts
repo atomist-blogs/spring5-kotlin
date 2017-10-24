@@ -26,9 +26,10 @@ import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 describe("Kotlin Spring5 generator", () => {
 
     it("edits project and verifies package", done => {
-        edit(GishProject).then(p => {
-            done();
-        }).catch(done);
+        edit(GishProject)
+            .then(p => {
+                done();
+            }).catch(done);
     });
 
     function edit(project: Project): Promise<Project> {
@@ -45,16 +46,11 @@ describe("Kotlin Spring5 generator", () => {
 
 });
 
-export function verify(p: Project) {
+function verify(p: Project) {
     assert(!p.findFileSync(GishPath));
     const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustom.kt");
     assert(f);
     const content = f.getContentSync();
     assert(content.includes("class MyCustom"));
     console.log("Verification ok");
-}
-
-
-function compile(hr: HandlerResult): Promise<any> {
-    return runCommand("mvn compile", {cwd: (hr as any).baseDir});
 }

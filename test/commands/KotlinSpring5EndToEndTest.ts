@@ -14,33 +14,51 @@
  * limitations under the License.
  */
 
-import { HandlerResult } from "@atomist/automation-client/HandlerResult";
 import "mocha";
+import * as assert from "power-assert";
+
 import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { verify } from "./KotlinSpring5Test";
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
+import { Project } from "@atomist/automation-client/project/Project";
+import { GishPath } from "./springBootStructureInferenceTest";
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { HandlerResult } from "@atomist/automation-client/HandlerResult";
 
 describe("Kotlin Spring5 generator end to end", () => {
 
-    it.skip("edits and persists", done => {
+    it("edits and persists", done => {
         generate().then(_ => {
             done();
-        }).catch(done);
-    })//.timeout(200000);
+        }).catch(done)
+    }).timeout(200000);
 
     function generate(): Promise<any> {
         const kgen = new TestGenerator();
-        kgen.artifactId = "k5";
+        kgen.artifactId = "my-custom";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.handle(null, kgen).then(hr => {
-                return verify(new NodeFsLocalProject("", (hr as any).baseDir));
-            }
-        );
+        return kgen.handle(null, kgen)
+            .then(hr => {
+                    return verify(new NodeFsLocalProject("", (hr as any).baseDir));
+                }
+            );
     }
 
 });
+
+function verify(p: Project) {
+    assert(!p.findFileSync(GishPath));
+    const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustomApplication.kt");
+    assert(f);
+    const content = f.getContentSync();
+    assert(content.includes("class MyCustom"));
+    console.log("Verification ok");
+}
+
+function compile(hr: HandlerResult): Promise<any> {
+    return runCommand("mvn compile", {cwd: (hr as any).baseDir});
+}
+
 
 export class TestGenerator extends KotlinSpring5 {
 
