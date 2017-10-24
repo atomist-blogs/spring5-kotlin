@@ -1,11 +1,7 @@
-import { curry } from "@typed/curry";
-
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
-import { JavaSeed, VersionedArtifact } from "@atomist/automation-client/operations/generate/java/JavaSeed";
-import {
-    SpringBootProjectStructure,
-} from "@atomist/automation-client/operations/generate/java/SpringBootProjectStructure";
+import { JavaSeed } from "@atomist/automation-client/operations/generate/java/JavaSeed";
+import { SpringBootProjectStructure, } from "@atomist/automation-client/operations/generate/java/SpringBootProjectStructure";
 import { updatePom } from "@atomist/automation-client/operations/generate/java/updatePom";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
@@ -22,11 +18,12 @@ const DefaultSourceRepo = "flux-flix-service";
  * Generator for Kotlin Spring boot apps.
  * Inherits parameters regarding packages etc.
  */
-@CommandHandler("Kotlin Spring 5 generator", "generate spring kotlin")
+@CommandHandler("Kotlin Spring 5 generator", "Generate a new spring Kotlin project")
 export class KotlinSpring5 extends JavaSeed {
 
     constructor() {
         super();
+        // Initialize parameters
         this.sourceOwner = DefaultSourceOwner;
         this.sourceRepo = DefaultSourceRepo;
     }
@@ -34,22 +31,22 @@ export class KotlinSpring5 extends JavaSeed {
     public projectEditor(ctx: HandlerContext, params: this): ProjectEditor<any> {
         return chainEditors(
             super.projectEditor(ctx, params),
-            (project: Project) => manipulate(params.rootPackage, params, project),
+            (project: Project) => manipulate(project, params),
         );
     }
 
 }
 
-function manipulate(rootPackage: string, va: VersionedArtifact, project: Project): Promise<Project> {
-    let appName = camelize(va.artifactId);
+function manipulate(project: Project, params: KotlinSpring5): Promise<Project> {
+    let appName = camelize(params.artifactId);
     appName = appName.charAt(0).toUpperCase() + appName.substr(1);
-    const smartArtifactId = (va.artifactId === "${projectName}") ? project.name : va.artifactId;
-    return updatePom(project, smartArtifactId, va.groupId, va.version, va.description)
-        .then(curry(doMovePackage)(rootPackage))
+    const smartArtifactId = (params.artifactId === "${projectName}") ? project.name : params.artifactId;
+    return updatePom(project, smartArtifactId, params.groupId, params.version, params.description)
+        .then(p => doMovePackage(p, params.rootPackage))
         .then(structure => renameApp(project, structure, appName));
 }
 
-function doMovePackage(rootPackage: string, project: Project): Promise<SpringBootProjectStructure> {
+function doMovePackage(project: Project, rootPackage: string): Promise<SpringBootProjectStructure> {
     return inferFromKotlinSource(project)
         .then(structure =>
             structure ?
