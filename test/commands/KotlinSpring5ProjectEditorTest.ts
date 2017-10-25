@@ -19,35 +19,71 @@ import "mocha";
 import * as assert from "power-assert";
 import { TestGenerator } from "./TestGenerator";
 import { GishPath, GishProject } from "./springBootStructureInferenceTest";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 describe("Kotlin Spring5 project editor", () => {
 
     it("edits project and verifies package", done => {
-        edit(GishProject)
+        edit(GishProject, "my-custom", "atomist", "com.the.smiths")
             .then(p => {
-                verify(p);
+                verifyPackage(p);
                 done();
             }).catch(done);
     });
 
-    function edit(project: Project): Promise<Project> {
-        const kgen = new TestGenerator();
-        kgen.artifactId = "my-custom";
-        kgen.groupId = "atomist";
-        kgen.rootPackage = "com.the.smiths";
-        return kgen.projectEditor(null, kgen)(project, null, kgen)
-            .then(hr => {
-                assert(hr.edited);
-                return project;
-            });
-    }
-
+    it("should edit POM", done => {
+        const artifact = "my-custom";
+        const group = "atomist";
+        const project = InMemoryProject.of({path: "pom.xml", content: SimplePom});
+        edit(project, artifact, group, "com.the.smiths")
+            .then(p => {
+                const found = p.findFileSync("pom.xml");
+                const newPom = found.getContentSync();
+                console.log(newPom);
+                assert(newPom.includes(`<artifactId>${artifact}</artifactId>`));
+                assert(newPom.includes(`<groupId>${group}</groupId>`));
+                done();
+            }).catch(done);
+    });
 });
 
-function verify(p: Project) {
+function edit(project: Project, artifactId: string, groupId: string, rootPackage: string): Promise<Project> {
+    const kgen = new TestGenerator();
+    kgen.artifactId = artifactId;
+    kgen.groupId = groupId;
+    kgen.rootPackage = rootPackage;
+    return kgen.projectEditor(null, kgen)(project, null, kgen)
+        .then(hr => {
+            assert(hr.edited);
+            return project;
+        });
+}
+
+function verifyPackage(p: Project) {
     assert(!p.findFileSync(GishPath));
     const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustom.kt");
     assert(f);
     const content = f.getContentSync();
     assert(content.includes("class MyCustom"));
 }
+
+// Minimal POM we can check is updated
+export const SimplePom = `<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>flux-flix-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>flux-flix-service</name>
+    <description>Demo project for Spring Boot</description>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.0.BUILD-SNAPSHOT</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>`;
