@@ -17,7 +17,7 @@
 import { Project } from "@atomist/automation-client/project/Project";
 import "mocha";
 import * as assert from "power-assert";
-import { TestGenerator } from "./KotlinSpring5EndToEndTest";
+import { TestGenerator } from "./TestGenerator";
 import { GishPath, GishProject } from "./springBootStructureInferenceTest";
 
 describe("Kotlin Spring5 generator", () => {

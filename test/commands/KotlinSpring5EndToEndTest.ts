@@ -16,59 +16,56 @@
 
 import "mocha";
 import * as assert from "power-assert";
-
-import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { HandlerResult } from "@atomist/automation-client/HandlerResult";
+import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { Project } from "@atomist/automation-client/project/Project";
-import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
 import { GishPath } from "./springBootStructureInferenceTest";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
+import { TestGenerator } from "./TestGenerator";
 
 describe("Kotlin Spring5 generator end to end", () => {
 
     it("edits and persists", done => {
-        generate().then(_ => {
-            done();
-        }).catch(done);
+        generate()
+            .then(verifyAndCompile)
+            .then(cr => {
+                    console.log(cr.stdout);
+                    done();
+                }
+            ).catch(done);
     }).timeout(200000);
 
-    function generate(): Promise<any> {
+    function generate(): Promise<LocalProject> {
         const kgen = new TestGenerator();
         kgen.artifactId = "my-custom";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
         return kgen.handle(null, kgen)
             .then(hr => {
-                    return verify(kgen.created);
-                },
-            );
+                assert(hr.code === 0);
+                return kgen.created;
+            });
+    }
+
+    function verifyAndCompile(p: LocalProject): Promise<CommandResult> {
+        verify(p);
+        return compile(p);
+    }
+
+    function verify(p: Project): void {
+        assert(!p.findFileSync(GishPath));
+        const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustomApplication.kt");
+        assert(f);
+        const content = f.getContentSync();
+        assert(content.includes("class MyCustom"));
+    }
+
+    function compile(p: LocalProject): Promise<CommandResult> {
+        return runCommand("mvn compile", {cwd: p.baseDir})
+            .catch(err => {
+                console.log(err);
+                throw err;
+            });
     }
 
 });
 
-function verify(p: Project) {
-    assert(!p.findFileSync(GishPath));
-    const f = p.findFileSync("src/main/kotlin/com/the/smiths/MyCustomApplication.kt");
-    assert(f);
-    const content = f.getContentSync();
-    assert(content.includes("class MyCustom"));
-}
-
-function compile(hr: HandlerResult): Promise<any> {
-    return runCommand("mvn compile", {cwd: (hr as any).baseDir});
-}
-
-export class TestGenerator extends KotlinSpring5 {
-
-    public created: Project;
-
-    constructor() {
-        super();
-        this.githubToken = process.env.GITHUB_TOKEN;
-    }
-
-    protected initAndSetRemote(p: Project, params: this): Promise<ActionResult<Project>> {
-        this.created = p;
-        return Promise.resolve(successOn(p));
-    }
-}
