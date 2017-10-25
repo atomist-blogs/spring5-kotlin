@@ -20,11 +20,12 @@ import * as assert from "power-assert";
 import { TestGenerator } from "./TestGenerator";
 import { GishPath, GishProject } from "./springBootStructureInferenceTest";
 
-describe("Kotlin Spring5 generator", () => {
+describe("Kotlin Spring5 project editor", () => {
 
     it("edits project and verifies package", done => {
         edit(GishProject)
             .then(p => {
+                verify(p);
                 done();
             }).catch(done);
     });
@@ -36,7 +37,7 @@ describe("Kotlin Spring5 generator", () => {
         kgen.rootPackage = "com.the.smiths";
         return kgen.projectEditor(null, kgen)(project, null, kgen)
             .then(hr => {
-                verify(project);
+                assert(hr.edited);
                 return project;
             });
     }

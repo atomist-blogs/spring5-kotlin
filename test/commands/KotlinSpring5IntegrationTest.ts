@@ -22,9 +22,9 @@ import { GishPath } from "./springBootStructureInferenceTest";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { TestGenerator } from "./TestGenerator";
 
-describe("Kotlin Spring5 generator end to end", () => {
+describe("Kotlin Spring5 generator integration test", () => {
 
-    it("edits and persists", done => {
+    it("edits, verifies and compiles", done => {
         generate()
             .then(verifyAndCompile)
             .then(cr => {
@@ -59,12 +59,9 @@ describe("Kotlin Spring5 generator end to end", () => {
         assert(content.includes("class MyCustom"));
     }
 
+    // Use Maven to compile the project
     function compile(p: LocalProject): Promise<CommandResult> {
-        return runCommand("mvn compile", {cwd: p.baseDir})
-            .catch(err => {
-                console.log(err);
-                throw err;
-            });
+        return runCommand("mvn compile", {cwd: p.baseDir});
     }
 
 });
