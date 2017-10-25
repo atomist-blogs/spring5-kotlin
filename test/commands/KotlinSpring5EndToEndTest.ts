@@ -17,19 +17,19 @@
 import "mocha";
 import * as assert from "power-assert";
 
-import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
-import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
-import { Project } from "@atomist/automation-client/project/Project";
-import { GishPath } from "./springBootStructureInferenceTest";
+import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
+import { Project } from "@atomist/automation-client/project/Project";
+import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
+import { GishPath } from "./springBootStructureInferenceTest";
 
 describe("Kotlin Spring5 generator end to end", () => {
 
     it("edits and persists", done => {
         generate().then(_ => {
             done();
-        }).catch(done)
+        }).catch(done);
     }).timeout(200000);
 
     function generate(): Promise<any> {
@@ -39,8 +39,8 @@ describe("Kotlin Spring5 generator end to end", () => {
         kgen.rootPackage = "com.the.smiths";
         return kgen.handle(null, kgen)
             .then(hr => {
-                    return verify(new NodeFsLocalProject("", (hr as any).baseDir));
-                }
+                    return verify(kgen.created);
+                },
             );
     }
 
@@ -52,19 +52,23 @@ function verify(p: Project) {
     assert(f);
     const content = f.getContentSync();
     assert(content.includes("class MyCustom"));
-    console.log("Verification ok");
 }
 
 function compile(hr: HandlerResult): Promise<any> {
     return runCommand("mvn compile", {cwd: (hr as any).baseDir});
 }
 
-
 export class TestGenerator extends KotlinSpring5 {
+
+    public created: Project;
 
     constructor() {
         super();
         this.githubToken = process.env.GITHUB_TOKEN;
-        this.local = true;
+    }
+
+    protected initAndSetRemote(p: Project, params: this): Promise<ActionResult<Project>> {
+        this.created = p;
+        return Promise.resolve(successOn(p));
     }
 }

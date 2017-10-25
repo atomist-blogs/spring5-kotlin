@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
+import { Project } from "@atomist/automation-client/project/Project";
 import "mocha";
 import * as assert from "power-assert";
-
-import { HandlerResult } from "@atomist/automation-client/HandlerResult";
-import { Project } from "@atomist/automation-client/project/Project";
 import { TestGenerator } from "./KotlinSpring5EndToEndTest";
 import { GishPath, GishProject } from "./springBootStructureInferenceTest";
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 
 describe("Kotlin Spring5 generator", () => {
 
@@ -52,5 +49,4 @@ function verify(p: Project) {
     assert(f);
     const content = f.getContentSync();
     assert(content.includes("class MyCustom"));
-    console.log("Verification ok");
 }

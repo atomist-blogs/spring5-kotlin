@@ -1,14 +1,16 @@
 import { CommandHandler } from "@atomist/automation-client/decorators";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
+import { ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
 import { JavaSeed } from "@atomist/automation-client/operations/generate/java/JavaSeed";
-import { SpringBootProjectStructure, } from "@atomist/automation-client/operations/generate/java/SpringBootProjectStructure";
+import {
+    SpringBootProjectStructure,
+} from "@atomist/automation-client/operations/generate/java/SpringBootProjectStructure";
 import { updatePom } from "@atomist/automation-client/operations/generate/java/updatePom";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { camelize } from "tslint/lib/utils";
 import { AllKotlinFiles, inferFromKotlinSource } from "./kotlinUtils";
-import { HandlerContext } from "@atomist/automation-client/HandlerContext";
-import { ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 
 const DefaultSourceOwner = "johnsonr";
 const DefaultSourceRepo = "flux-flix-service";
@@ -17,7 +19,7 @@ const DefaultSourceRepo = "flux-flix-service";
  * Generator for Kotlin Spring boot apps.
  * Inherits parameters regarding packages etc.
  */
-@CommandHandler("Kotlin Spring 5 generator", "Generate a new spring Kotlin project")
+@CommandHandler("Kotlin Spring 5 generator", "generate spring kotlin")
 export class KotlinSpring5 extends JavaSeed {
 
     constructor() {
@@ -45,15 +47,17 @@ const transformSeed: ProjectEditor = (project: Project, ctx: HandlerContext, par
                     .then(p =>
                         movePackage(p, structure.applicationPackage, params.rootPackage, AllKotlinFiles)) :
                 project)
-        .then(successfulEdit)
+        .then(successfulEdit);
 };
 
-function renameAppClass(project: Project, structure: SpringBootProjectStructure, appName: string): Promise<Project> {
-    return doWithFiles(project, AllKotlinFiles, f =>
-        f.replaceAll(structure.applicationClassStem, appName)
+function renameAppClass(project: Project,
+                        structure: SpringBootProjectStructure,
+                        appName: string): Promise<Project> {
+    return doWithFiles(project, AllKotlinFiles, file =>
+        file.replaceAll(structure.applicationClassStem, appName)
             .then(f => f.path.includes(structure.applicationClassStem) ?
                 f.setPath(f.path.replace(structure.applicationClassStem, appName)) :
-                f
-            )
-    )
+                f,
+            ),
+    );
 }
