@@ -14,34 +14,62 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client/configuration";
+import { guid } from "@atomist/automation-client/internal/util/string";
+import { SpringBootSeed } from "@atomist/automation-client/operations/generate/java/SpringBootSeed";
 import * as appRoot from "app-root-path";
-
 import { KotlinSpring5 } from "./commands/KotlinSpring5";
+import {
+    LogzioAutomationEventListener,
+    LogzioOptions,
+} from "./util/logzio";
+import {
+    appEnv,
+    secret,
+} from "./util/secrets";
 
 // tslint:disable-next-line:no-var-requires
-const pj = require(`${appRoot}/package.json`);
+const pj = require(`${appRoot.path}/package.json`);
 
-const token = process.env.GITHUB_TOKEN;
+const token = secret("github.token", process.env.GITHUB_TOKEN);
 
-export const configuration: Configuration = {
+const authEnabled = !appEnv.isLocal;
+
+const logzioOptions: LogzioOptions = {
+    applicationId: appEnv.app ? `cf.${appEnv.app.application_id}` : guid(),
+    environmentId: appEnv.app ? `cf.${appEnv.app.space_name}` : "local",
+    token: secret("logzio.token", process.env.LOGZIO_TOKEN),
+};
+
+export const configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: "T7GMF5USG", // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: process.env.NODE_ENV !== "production" ? [ "T095SFFBK" ] : null,
+    groups: process.env.NODE_ENV === "production" ? ["all"] : null,
     commands: [
         KotlinSpring5,
-    ],
-    events: [
+        SpringBootSeed,
     ],
     token,
+    listeners: logzioOptions.token ? [ new LogzioAutomationEventListener(logzioOptions) ] : [],
     http: {
         enabled: true,
+        forceSecure: process.env.NODE_ENV === "production",
         auth: {
             basic: {
-                enabled: false,
+                enabled: process.env.NODE_ENV === "staging",
+                username: secret("dashboard.user"),
+                password: secret("dashboard.password"),
             },
             bearer: {
-                enabled: false,
+                enabled: authEnabled,
+                token,
+            },
+            github: {
+                enabled: authEnabled && process.env.NODE_ENV === "production",
+                clientId: secret("oauth.clientId"),
+                clientSecret: secret("oauth.clientSecret"),
+                callbackUrl: secret("oauth.callbackUrl"),
+                adminOrg: "atomisthq",
             },
         },
     },

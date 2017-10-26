@@ -1,9 +1,17 @@
 applications:
-- name: spring-generators
+- name: generator-automation
   command: npm start
-  memory: 128M
+  memory: 256M
+  routes:
+  - route: start.atomist.io
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
-  health-check-type: http
-  health-check-http-endpoint: /health
+  #health-check-type: http
+  #health-check-http-endpoint: /health
   env:
     SUPPRESS_NO_CONFIG_WARNING: true
+  services:
+  - teams
+  - github-token
+  - generator-github-oauth
+  - dashboard-credentials
+  - logzio-credentials

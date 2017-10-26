@@ -28,7 +28,7 @@ const DefaultSourceRepo = "flux-flix-service";
  * Generator for Kotlin Spring boot apps.
  * Inherits parameters regarding packages etc.
  */
-@CommandHandler("Kotlin Spring 5 generator", "generate spring kotlin")
+@CommandHandler("Kotlin Spring 5 generator", "generate spring-boot kotlin")
 @Tags("java", "spring", "kotlin", "generator")
 export class KotlinSpring5 extends JavaSeed {
 
