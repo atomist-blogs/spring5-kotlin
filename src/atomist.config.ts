@@ -61,7 +61,7 @@ export const configuration = {
                 password: secret("dashboard.password"),
             },
             bearer: {
-                enabled: authEnabled,
+                enabled: process.env.NODE_ENV === "staging",
                 token,
             },
             github: {

@@ -5,8 +5,6 @@ applications:
   routes:
   - route: start.atomist.io
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
-  #health-check-type: http
-  #health-check-http-endpoint: /health
   env:
     SUPPRESS_NO_CONFIG_WARNING: true
   services:
