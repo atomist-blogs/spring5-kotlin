@@ -1,7 +1,7 @@
 {
-  "name": "spring5-kotlin",
+  "name": "@atomist/spring5-kotlin",
   "version": "0.1.0",
-  "description": "Atomist generator for Spring 5 within Kotlin",
+  "description": "Atomist generator for Spring 5 with Kotlin",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@atomist/antlr": "^0.1.3",
-    "@atomist/automation-client": "^0.2.3"
+    "@atomist/automation-client": "https://atomist.jfrog.io/atomist/npm-dev/@atomist/automation-client/-/@atomist/automation-client-0.2.4-20171026121446.tgz"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
@@ -48,21 +48,22 @@
     "clean": "npm run clean-js ; rm -rf *-v8.log profile.txt build",
     "clean-js": "find src test -type f -name '*.js' -print0 | xargs -0 rm -f",
     "compile": "tsc -p .",
+    "debug": "node $NODE_DEBUG_OPTION --trace-warnings node_modules/@atomist/automation-client/start.client.js",
     "distclean": "npm run clean ; rm -rf node_modules",
     "fmt": "tsfmt --replace",
     "git:info": "$(npm bin)/git-info",
     "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript -m --out ./src/typings/ \"./graphql/**/*.graphql\"",
     "lint": "tslint --format verbose --project . --exclude '{build,node_modules}/**' '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
-    "start": "npm run compile && npm run git:info && $(npm bin)/atomist-client --open=true",
-    "test": "mocha --compilers ts:espower-typescript/guess 'test/**/*.ts'",
+    "start": "node --trace-warnings --trace_gc --expose_gc --optimize_for_size --always_compact --max_old_space_size=75 node_modules/@atomist/automation-client/start.client.js",
+    "test": "mocha --require espower-typescript/guess 'test/**/!(*atomist.config).ts' --exit",
     "testone": "mocha --compilers ts:espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals",
     "watch:build": "tsc --watch",
     "watch:server": "nodemon node_modules/@atomist/automation-client/start.client.js --watch './build'"
   },
   "engines": {
-    "node": "8.5.x",
-    "npm": "5.3.x"
+    "node": "8.x.x",
+    "npm": "5.x.x"
   }
 }
