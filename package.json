@@ -13,12 +13,12 @@
     "automation",
     "seed"
   ],
-  "homepage": "https://github.com/atomist/automation-seed-ts#readme",
+  "homepage": "https://github.com/atomist-blogs/spring5-kotlin-generator#readme",
   "bugs": {
-    "url": "https://github.com/atomist/automation-seed-ts/issues"
+    "url": "https://github.com/atomist-blogs/spring5-kotlin-generator/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://atomist.jfrog.io/atomist/npm-dev/@atomist/automation-client/-/@atomist/automation-client-0.2.4-20171026135526.tgz",
+    "@atomist/automation-client": "^0.2.5",
     "@atomist/antlr": "^0.1.3",
     "cfenv": "^1.0.4",
     "logzio-nodejs": "^0.4.4",
