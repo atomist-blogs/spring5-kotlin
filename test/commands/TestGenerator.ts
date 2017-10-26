@@ -2,9 +2,9 @@
  * Generator that overrides to disable git init and push
  */
 import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { KotlinSpring5 } from "../../src/commands/KotlinSpring5";
-import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 
 export class TestGenerator extends KotlinSpring5 {
 

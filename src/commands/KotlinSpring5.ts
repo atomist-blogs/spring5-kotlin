@@ -1,6 +1,12 @@
-import { CommandHandler } from "@atomist/automation-client/decorators";
-import { HandlerContext } from "@atomist/automation-client/HandlerContext";
-import { ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import {
+    CommandHandler,
+    HandlerContext,
+    Tags,
+} from "@atomist/automation-client/Handlers";
+import {
+    ProjectEditor,
+    successfulEdit,
+} from "@atomist/automation-client/operations/edit/projectEditor";
 import { movePackage } from "@atomist/automation-client/operations/generate/java/javaProjectUtils";
 import { JavaSeed } from "@atomist/automation-client/operations/generate/java/JavaSeed";
 import {
@@ -10,7 +16,10 @@ import { updatePom } from "@atomist/automation-client/operations/generate/java/u
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { camelize } from "tslint/lib/utils";
-import { AllKotlinFiles, inferFromKotlinSource } from "./kotlinUtils";
+import {
+    AllKotlinFiles,
+    inferFromKotlinSource,
+} from "./kotlinUtils";
 
 const DefaultSourceOwner = "johnsonr";
 const DefaultSourceRepo = "flux-flix-service";
@@ -20,6 +29,7 @@ const DefaultSourceRepo = "flux-flix-service";
  * Inherits parameters regarding packages etc.
  */
 @CommandHandler("Kotlin Spring 5 generator", "generate spring kotlin")
+@Tags("java", "spring", "kotlin", "generator")
 export class KotlinSpring5 extends JavaSeed {
 
     constructor() {
@@ -27,6 +37,7 @@ export class KotlinSpring5 extends JavaSeed {
         // Initialize parameters
         this.sourceOwner = DefaultSourceOwner;
         this.sourceRepo = DefaultSourceRepo;
+
     }
 
     public projectEditor(ctx: HandlerContext, params: this): ProjectEditor<this> {
@@ -36,9 +47,9 @@ export class KotlinSpring5 extends JavaSeed {
 }
 
 const transformSeed: ProjectEditor = (project: Project, ctx: HandlerContext, params: KotlinSpring5) => {
-    let appName = camelize(params.artifactId);
-    appName = appName.charAt(0).toUpperCase() + appName.substr(1);
     const smartArtifactId = (params.artifactId === "${projectName}") ? project.name : params.artifactId;
+    let appName = camelize(smartArtifactId);
+    appName = appName.charAt(0).toUpperCase() + appName.substr(1);
     return updatePom(project, smartArtifactId, params.groupId, params.version, params.description)
         .then(inferFromKotlinSource)
         .then(structure =>

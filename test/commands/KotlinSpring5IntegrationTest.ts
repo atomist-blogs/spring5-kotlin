@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
+import { Project } from "@atomist/automation-client/project/Project";
 import "mocha";
 import * as assert from "power-assert";
-import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { Project } from "@atomist/automation-client/project/Project";
 import { GishPath } from "./springBootStructureInferenceTest";
-import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { TestGenerator } from "./TestGenerator";
 
 describe("Kotlin Spring5 generator integration test", () => {
@@ -30,7 +30,7 @@ describe("Kotlin Spring5 generator integration test", () => {
             .then(cr => {
                     console.log(cr.stdout);
                     done();
-                }
+                },
             ).catch(done);
     }).timeout(200000);
 
@@ -65,4 +65,3 @@ describe("Kotlin Spring5 generator integration test", () => {
     }
 
 });
-
