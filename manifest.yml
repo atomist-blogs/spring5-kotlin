@@ -2,6 +2,8 @@ applications:
 - name: generator-automation
   command: npm start
   memory: 256M
+  health-check-type: http
+  health-check-http-endpoint: /health
   routes:
   - route: start.atomist.io
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
