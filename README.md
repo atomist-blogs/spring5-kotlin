@@ -1,15 +1,13 @@
-# @atomist/automation-seed
+# spring5-kotlin
 
-[![Build Status](https://travis-ci.org/atomist/automation-seed-ts.svg?branch=master)](https://travis-ci.org/atomist/automation-seed-ts)
+[![Build Status](https://travis-ci.org/atomist-blogs/spring5-kotlin.svg?branch=master)](https://travis-ci.org/atomist-blogs/spring5-kotlin)
 
 This repository contains examples demonstrating use of
 the [Atomist][atomist] API.  You will find examples illustrating:
 
 -   Creating bot commands using _command handlers_
--   Responding to DevOps events, e.g., commits pushed to a repository,
-    using _event handlers_
 
-These example use the [`@atomist/automation-client`][client] node
+These examples use the [`@atomist/automation-client`][client] node
 module to implement a local client that connects to the Atomist API.
 
 [client]: https://github.com/atomist/automation-client-ts (@atomist/automation-client Node Module)
@@ -102,16 +100,17 @@ $ npm run start
 
 ## Invoking a command handler from Slack
 
-This project contains the code to create and respond to a simple
-`hello world` bot command.  The code that defines the bot command and
+This project contains the code to generate a new Spring 5 Kotlin
+project by running the `generate spring-boot kotlin` command. 
+The code that defines the bot command and
 implements responding to the command, i.e., the _command handler_, can
-be found in [`HelloWorld.ts`][hello].  Once you have your local
+be found in [`KotlinSpring5.ts`][spring5-kotlin].  Once you have your local
 automation client running (the previous step in this guide), you can
 invoke the command handler by sending the Atomist bot the command in
 the `#general` channel of the [atomist-playground Slack team][play-slack]:
 
 ```
-@atomist hello world
+@atomist generate spring-boot kotlin
 ```
 
 Once you've submitted the command in Slack, you'll see the incoming
@@ -119,50 +118,8 @@ and outgoing messages show up in the logs of your locally running
 automation-client.  Ultimately, you should see the response from the
 bot in Slack.
 
-[hello]: https://github.com/atomist/automation-seed-ts/blob/master/src/commands/HelloWorld.ts (HelloWorld Command Handler)
+[spring5-kotlin]: https://github.com/atomist-blogs/spring5-kotlin/blob/master/src/commands/KotlinSpring5.ts (Command Handler)
 
-Feel free to modify the code in the `HelloWorld` command handler,
-restart your local automation client, and see what happens!
-
-## Triggering an event handler
-
-While command handlers respond to commands you send the Atomist bot,
-_event handlers_ take action when different types of events occur in
-your development and operations environment.  Some examples of events
-are commits pushed to a repo, or a CI build that fails, or an instance
-of a running service that becomes unhealthy.  Example responses to those
-events are showing the commits in a Slack message, automatically
-restarting the build, and triggering a PagerDuty alert, respectively.
-
-The sample event handler in this project, [NotifyOnPush][nop-handler],
-will notice when someone pushes new commits to a repository in the
-GitHub organization and send a notice of that push to all Slack
-channels associated with that repository.
-
-If you have followed the instructions above and are running these
-automations against the atomist-playground Slack team and GitHub
-organization, go ahead and edit the [notify-on-push][nop-repo]
-repository by adding some test to its [README][nop-readme].  Once you
-have saved your changes, you should see that event appear in the
-console logs of your locally running automation client, followed by a
-log of the actions the event handler is taking.  Once those actions
-are complete, you should see a new message in the
-[`#notify-on-push`][nop-channel] channel in the atomist-playground
-Slack team.
-
-[nop-handler]: https://github.com/atomist/automation-seed-ts/blob/master/src/events/NotifyOnPush.ts (Atomist NotifyOnPush Event Handler)
-[nop-repo]: https://github.com/atomist-playground/notify-on-push (Atomist NotifyOnPush Repository)
-[nop-readme]: https://github.com/atomist-playground/notify-on-push/edit/master/README.md (Edit NotifyOnPush README)
-[nop-channel]: https://atomist-playground.slack.com/messages/C7GNF6743/ (NotifyOnPush Slack Channel)
-
-## Dashboard and GraphQL data explorer
-
-When the automation client has successfully established a connection
-to the Atomist API server, the Dashboard (work-in-progress) and
-GraphQL data explorer will be available.
-
-*   Dashboard: http://localhost:2866
-*   GraphQL Data Explorer: http://localhost:2866/graphql
 
 ## Support
 
