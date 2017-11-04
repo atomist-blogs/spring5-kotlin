@@ -26,6 +26,8 @@ import {
     appEnv,
     secret,
 } from "./util/secrets";
+import { CommandHandlerSampleGenerator } from "./commands/CommandHandlerSampleGenerator";
+import { EventHandlerSampleGenerator } from "./commands/EventHandlerSampleGenerator";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -48,6 +50,8 @@ export const configuration = {
     commands: [
         KotlinSpring5,
         SpringBootSeed,
+        CommandHandlerSampleGenerator,
+        EventHandlerSampleGenerator,
     ],
     token,
     listeners: logzioOptions.token ? [ new LogzioAutomationEventListener(logzioOptions) ] : [],
