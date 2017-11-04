@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist-blogs/spring5-kotlin/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/rkE8e1I9Ab",
+    "@atomist/automation-client": "https://r.atomist.com/SJ2ZJ0zjA-",
     "@atomist/antlr": "^0.1.3",
     "cfenv": "^1.0.4",
     "logzio-nodejs": "^0.4.4",
