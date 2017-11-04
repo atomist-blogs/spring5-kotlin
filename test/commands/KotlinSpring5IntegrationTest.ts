@@ -21,6 +21,9 @@ import "mocha";
 import * as assert from "power-assert";
 import { GishPath } from "./springBootStructureInferenceTest";
 import { TestGenerator } from "./TestGenerator";
+import { SlackMessage } from "@atomist/slack-messages/SlackMessages";
+import { SuccessPromise } from "@atomist/automation-client/HandlerResult";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 
 describe("Kotlin Spring5 generator integration test", () => {
 
@@ -39,7 +42,13 @@ describe("Kotlin Spring5 generator integration test", () => {
         kgen.artifactId = "my-custom";
         kgen.groupId = "atomist";
         kgen.rootPackage = "com.the.smiths";
-        return kgen.handle(null, kgen)
+        const ctx: any = {
+            messageClient: {
+                respond(msg: string | SlackMessage) {
+                    return Promise.resolve();
+            }},
+        };
+        return kgen.handle(ctx as HandlerContext, kgen)
             .then(hr => {
                 assert(hr.code === 0);
                 return kgen.created;
