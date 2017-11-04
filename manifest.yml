@@ -1,9 +1,7 @@
 applications:
 - name: generator-automation
-  command: npm start
+  command: node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=170 node_modules/@atomist/automation-client/start.client.js
   memory: 256M
-  health-check-type: http
-  health-check-http-endpoint: /health
   routes:
   - route: start.atomist.io
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
