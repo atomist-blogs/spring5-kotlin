@@ -20,6 +20,7 @@ import * as appRoot from "app-root-path";
 import { CommandHandlerSampleGenerator } from "./commands/CommandHandlerSampleGenerator";
 import { EventHandlerSampleGenerator } from "./commands/EventHandlerSampleGenerator";
 import { KotlinSpring5 } from "./commands/KotlinSpring5";
+import { NewAutomation } from "./commands/NewAutomation";
 import {
     LogzioAutomationEventListener,
     LogzioOptions,
@@ -52,6 +53,7 @@ export const configuration = {
         SpringBootSeed,
         CommandHandlerSampleGenerator,
         EventHandlerSampleGenerator,
+        NewAutomation,
     ],
     token,
     listeners: logzioOptions.token ? [new LogzioAutomationEventListener(logzioOptions)] : [],

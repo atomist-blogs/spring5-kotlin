@@ -17,8 +17,8 @@
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { AbstractNewAutomation } from "./AbstractNewAutomation";
 
-@CommandHandler("Generate a new automation client project", "generate automation-client")
-export class AutomationClientGenerator extends AbstractNewAutomation {
+@CommandHandler("Generate a new automation client project", "generate automation")
+export class NewAutomation extends AbstractNewAutomation {
 
     constructor() {
         super();
