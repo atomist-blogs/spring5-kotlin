@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { AbstractNewAutomation } from "./AbstractNewAutomation";
 import { CommandHandler } from "@atomist/automation-client/Handlers";
+import { AbstractNewAutomation } from "./AbstractNewAutomation";
 
 @CommandHandler("Generate a new event-handler sample project", "generate event-handler-sample")
 export class EventHandlerSampleGenerator extends AbstractNewAutomation {

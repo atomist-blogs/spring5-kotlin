@@ -15,26 +15,26 @@
  */
 
 import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
+import { SuccessPromise } from "@atomist/automation-client/HandlerResult";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { SlackMessage } from "@atomist/slack-messages/SlackMessages";
 import "mocha";
 import * as assert from "power-assert";
 import { GishPath } from "./springBootStructureInferenceTest";
 import { TestGenerator } from "./TestGenerator";
-import { SlackMessage } from "@atomist/slack-messages/SlackMessages";
-import { SuccessPromise } from "@atomist/automation-client/HandlerResult";
-import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 
 describe("Kotlin Spring5 generator integration test", () => {
 
     it("edits, verifies and compiles", done => {
         generate()
             .then(verifyAndCompile)
-            .then(cr => {
-                    console.log(cr.stdout);
-                    done();
-                },
-            ).catch(done);
+            .then(cr => console.log(cr.stdout), e => {
+                console.log(`mvn compile failed:${JSON.stringify(e, null, 2)}`);
+                assert(false);
+            })
+            .then(done, done);
     }).timeout(200000);
 
     function generate(): Promise<LocalProject> {
@@ -46,7 +46,8 @@ describe("Kotlin Spring5 generator integration test", () => {
             messageClient: {
                 respond(msg: string | SlackMessage) {
                     return Promise.resolve();
-            }},
+                },
+            },
         };
         return kgen.handle(ctx as HandlerContext, kgen)
             .then(hr => {
@@ -70,11 +71,11 @@ describe("Kotlin Spring5 generator integration test", () => {
 
     // Use Maven to compile the project
     function compile(p: LocalProject): Promise<CommandResult> {
-        return runCommand("mvn compile", {
-                cwd: p.baseDir,
-                // Maven can generate reams of output...don't fall over on this
-                maxBuffer: 1024 * 1000,
-            });
+        return runCommand("mvn --batch-mode compile", {
+            cwd: p.baseDir,
+            // Maven can generate reams of output...don't fall over on this
+            maxBuffer: 1024 * 1000,
+        });
     }
 
 });

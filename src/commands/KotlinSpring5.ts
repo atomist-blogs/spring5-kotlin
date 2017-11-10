@@ -78,13 +78,13 @@ const transformSeed: ProjectEditor = (project: Project, ctx: HandlerContext, par
 };
 
 function renameAppClass(project: Project,
-                        structure: SpringBootProjectStructure,
-                        appName: string): Promise<Project> {
+    structure: SpringBootProjectStructure,
+    appName: string): Promise<Project> {
     return doWithFiles(project, AllKotlinFiles, file =>
         file.replaceAll(structure.applicationClassStem, appName)
             .then(f => f.path.includes(structure.applicationClassStem) ?
                 f.setPath(f.path.replace(structure.applicationClassStem, appName)) :
                 f,
-            ),
+        ),
     );
 }

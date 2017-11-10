@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { AbstractNewAutomation } from "./AbstractNewAutomation";
 import { CommandHandler } from "@atomist/automation-client/decorators";
+import { AbstractNewAutomation } from "./AbstractNewAutomation";
 
 @CommandHandler("Generate a new command-handler sample project", "generate command-handler-sample")
 export class CommandHandlerSampleGenerator extends AbstractNewAutomation {

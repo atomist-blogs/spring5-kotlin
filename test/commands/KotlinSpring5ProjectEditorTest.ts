@@ -34,7 +34,7 @@ describe("Kotlin Spring5 project editor", () => {
     it("should edit POM", done => {
         const artifact = "my-custom";
         const group = "atomist";
-        const project = InMemoryProject.of({path: "pom.xml", content: SimplePom});
+        const project = InMemoryProject.of({ path: "pom.xml", content: SimplePom });
         edit(project, artifact, group, "com.the.smiths")
             .then(p => {
                 const found = p.findFileSync("pom.xml");

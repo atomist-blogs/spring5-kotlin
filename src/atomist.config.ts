@@ -17,6 +17,8 @@
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { SpringBootSeed } from "@atomist/automation-client/operations/generate/java/SpringBootSeed";
 import * as appRoot from "app-root-path";
+import { CommandHandlerSampleGenerator } from "./commands/CommandHandlerSampleGenerator";
+import { EventHandlerSampleGenerator } from "./commands/EventHandlerSampleGenerator";
 import { KotlinSpring5 } from "./commands/KotlinSpring5";
 import {
     LogzioAutomationEventListener,
@@ -26,8 +28,6 @@ import {
     appEnv,
     secret,
 } from "./util/secrets";
-import { CommandHandlerSampleGenerator } from "./commands/CommandHandlerSampleGenerator";
-import { EventHandlerSampleGenerator } from "./commands/EventHandlerSampleGenerator";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -45,7 +45,7 @@ const logzioOptions: LogzioOptions = {
 export const configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: process.env.NODE_ENV !== "production" ? [ "T095SFFBK" ] : null,
+    teamIds: process.env.NODE_ENV !== "production" ? ["T095SFFBK"] : null,
     groups: process.env.NODE_ENV === "production" ? ["all"] : null,
     commands: [
         KotlinSpring5,
@@ -54,7 +54,7 @@ export const configuration = {
         EventHandlerSampleGenerator,
     ],
     token,
-    listeners: logzioOptions.token ? [ new LogzioAutomationEventListener(logzioOptions) ] : [],
+    listeners: logzioOptions.token ? [new LogzioAutomationEventListener(logzioOptions)] : [],
     http: {
         enabled: true,
         forceSecure: process.env.NODE_ENV === "production",
