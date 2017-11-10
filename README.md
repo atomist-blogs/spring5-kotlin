@@ -14,17 +14,11 @@ module to implement a local client that connects to the Atomist API.
 
 ## Prerequisites
 
-### Access to Atomist testing environment
+### Enroll the Atomist bot in your Slack team
 
-To get access to this preview, please reach out to members of Atomist
-in the `#support` channel of [atomist-community Slack team][slack].
-
-You'll receive an invitation to a [Slack team][play-slack]
-and [GitHub organization][play-gh] that can be used to explore this
-new approach to writing and running automations.
-
-[play-slack]: https://atomist-playground.slack.com (Atomist Playground Slack)
-[play-gh]: https://github.com/atomist-playground (Atomist Playground GitHub Organization)
+<p align="center">
+  <img alt="Add to Slack" height="50" width="174" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" />
+</p>
 
 ### Node.js
 
@@ -42,66 +36,59 @@ $ npm -v
 
 ### Cloning the repository and installing dependencies
 
-To get started run the following commands:
+To get started run the following commands to clone the project,
+install its dependencies, and build the project:
 
 ```
 $ git clone git@github.com:atomist/automation-seed-ts.git
 $ cd automation-seed-ts
 $ npm install
+$ npm run build
 ```
 
 ### Configuring your environment
 
-For the client to connect and authenticate to the Atomist API,
-a [GitHub personal access token][token] with `read:org` scope is
-required.  Once you have obtained the GitHub personal access token,
-make it available to the client by exporting it into an environment
-variable:
+If this is the first time you will be running an Atomist API client
+locally, you should first configure your system using the
+`atomist-config` script:
 
 ```
-$ export GITHUB_TOKEN=<your token goes here>
+$ `npm bin`/atomist-config [SLACK_TEAM_ID]
 ```
 
-Alternatively you can also place the token in `src/atomist.config.ts`.
-Replace
+The script does two things: records what Slack team you want your
+automations running in and creates
+a [GitHub personal access token][token] with "read:org" scope.
 
-```typescript
-const token = process.env.GITHUB_TOKEN;
-```
+You must run the automations in a Slack team of which you are a
+member.  You can get your Slack team ID by typing `team` in a DM to
+the Atomist Bot.  If you do not supply the Slack team ID on the
+command line, the script will prompt you to enter it.
 
-with
+The `atomist-config` script will prompt you for your GitHub
+credentials.  It needs them to create the GitHub personal access
+token.  Atomist does not store your credentials and only writes the
+token to your local machine.
 
-```typescript
-const token = "your token goes here";
-```
-
-*If you  add the token  to the `atomist.config.ts`, please  do **not**
-commit the file and push it to GitHub.com.*
+The Atomist API client sends GitHub personal access token when
+connecting to the Atomist API.  The Atomist API will use the token to
+confirm you are who you say you are and are in a GitHub org connected
+to the Slack team in which you are running the automations.
 
 [token]: https://github.com/settings/tokens (GitHub Personal Access Tokens)
-
-The Atomist API will only allows members of the GitHub team
-`atomist-automation` to authenticate and register a new client.  If
-you followed the instructions above and have been invited to
-the [atomist-playground][play-gh] GitHub organization, you will have
-been added to this team in that organization.  If you are trying to
-run these automations in your own Slack team and GitHub organization,
-you will have to create a team in your GitHub organization named
-`atomist-automation` and add the users who want to create and register
-automations to it.
 
 ## Starting up the automation-client
 
 To start the client, run the following command:
 
 ```
-$ npm run start
+$ npm run autostart
 ```
 
 ## Invoking a command handler from Slack
 
 This project contains the code to generate a new Spring 5 Kotlin
-project by running the `generate spring-boot kotlin` command. 
+project by running the `generate spring-boot kotlin` command.
 The code that defines the bot command and
 implements responding to the command, i.e., the _command handler_, can
 be found in [`KotlinSpring5.ts`][spring5-kotlin].  Once you have your local
@@ -120,7 +107,6 @@ bot in Slack.
 
 [spring5-kotlin]: https://github.com/atomist-blogs/spring5-kotlin/blob/master/src/commands/KotlinSpring5.ts (Command Handler)
 
-
 ## Support
 
 General support questions should be discussed in the `#support`
@@ -137,14 +123,15 @@ You will need to install [node][] to build and test this project.
 
 ### Build and Test
 
-Command | Reason
+Command | Description
 ------- | ------
 `npm install` | to install all the required packages
-`npm run start` | to start the Atomist automation client
+`npm start` | to start the Atomist automation client
+`npm run autostart` | run the client, refreshing when files change
 `npm run lint` | to run tslint against the TypeScript
 `npm run compile` | to compile all TypeScript into JavaScript
 `npm test` | to run tests and ensure everything is working
-`npm run autotest` | run tests continuously (you may also need to run `tsc -w`)
+`npm run autotest` | run tests continuously
 `npm run clean` | remove stray compiled JavaScript files and build directory
 
 ### Release
@@ -152,8 +139,7 @@ Command | Reason
 To create a new release of the project, simply push a tag of the form
 `M.N.P` where `M`, `N`, and `P` are integers that form the next
 appropriate [semantic version][semver] for release.  The version in
-the package.json is replaced by the build and is totally ignored!  For
-example:
+the package.json must be the same as the tag.  For example:
 
 [semver]: http://semver.org
 
