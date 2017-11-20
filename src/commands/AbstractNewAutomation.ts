@@ -25,14 +25,14 @@ import { doWithAtMostOneMatch } from "@atomist/automation-client/project/util/pa
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 
 /**
- * Abstract generator command to create a new Ndde.JS automation client repo
+ * Abstract generator command to create a new Node.JS automation client repo
  */
 export abstract class AbstractNewAutomation extends UniversalSeed {
 
     public projectEditor(ctx: HandlerContext, params: this): ProjectEditor {
-        const owner = this.targetOwner.toLowerCase();
-        const repo = this.targetRepo.toLowerCase();
-        return (project: Project, context: HandlerContext, parameters?: this) => {
+        const owner = params.targetOwner.toLowerCase();
+        const repo = params.targetRepo.toLowerCase();
+        return project => {
             return doWithAtMostOneMatch<{ name: string },
                 Project>(project, "package.json", packageJsonNameGrammar, m => {
                     m.name = `@${owner}/${repo}`;
