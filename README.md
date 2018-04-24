@@ -1,6 +1,15 @@
 # spring5-kotlin
 
-[![Build Status](https://travis-ci.org/atomist-blogs/spring5-kotlin.svg?branch=master)](https://travis-ci.org/atomist-blogs/spring5-kotlin)
+**DEPRECATED** _The Atomist generators in this repository have been
+updated and moved to other repositories.  The latest Spring Java and
+Kotlin generators can be found in
+[atomist/spring-automation][spring-automation].  The latest automation
+generators can be found in [atomist/node-automation][node-automation]._
+
+[spring-automation]: https://github.com/atomist/spring-automation (Atomist Spring Automations)
+[node-automation]: https://github.com/atomist/node-automation (Atomist Node.js Automations)
+
+---
 
 This repository contains examples demonstrating use of
 the [Atomist][atomist] API.  You will find examples illustrating:
